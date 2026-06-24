@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Optique Chap3- Lentille et modèle de l'œil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #F6E7FE;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .flashcard-container {
+            perspective: 1000px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 10px;
+        }
+
+        .flashcard-front {
+            background-color: #D68FFA;
+            color: white;
+        }
+
+        .flashcard-back {
+            background-color: #8427F5;
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        #answer {
+            font-family: "Comic Sans MS", sans-serif;
+            font-size: 22px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 10px;
+        }
+
+        #question img, #answer img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #4CAF93;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            flex: 1;
+            max-width: 30%;
+        }
+
+        button:hover {
+            background-color: #27F5C2;
+        }
+
+        .counter {
+            text-align: center;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .nuclide {
+            display: inline-flex;
+            align-items: center;
+            font-size: 22px;
+        }
+
+        .nuclide-numbers {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-size: 13px;
+            line-height: 1.1;
+            margin-right: 1px;
+        }
+
+        .nuclide-sup {
+            order: 1;
+        }
+
+        .nuclide-sub {
+            order: 2;
+        }
+
+        .frac {
+            display: inline-block;
+            margin-left: 0.1em;
+            margin-right: 0.1em;
+            vertical-align: -64%;
+            text-align: center;
+        }
+
+        .frac > .num, .frac > .den {
+            display: inline-block;
+            padding: 0 0.1em;
+        }
+
+        .frac > .fracbar {
+            display: block;
+            height: 0;
+            margin: 0;
+            border: 0;
+            border-bottom: 0.1em solid;
+            overflow: hidden;
+        }
+
+        .den {
+            vertical-align: top;
+        }
+
+        ul {
+            text-align: left;
+            margin: 0 auto;
+            max-width: 80%;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="flashcard-container">
+        <div class="flashcard">
+            <div class="flashcard-inner" id="flashcardInner">
+                <div class="flashcard-front">
+                    <h2 id="question"></h2>
+                </div>
+                <div class="flashcard-back">
+                    <p id="answer"></p>
+                </div>
+            </div>
+        </div>
+        <div class="counter">
+            <span id="current">1</span> / <span id="total">6</span>
+        </div>
+        <div class="navigation">
+            <button id="prev">Précédent</button>
+            <button id="next">Suivant</button>
+            <button id="flip">Retourner</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Lentille divergente Vs Lentille convergente",
+                answer: "<p><strong>Lentille divergente</strong> : possède des bords épais et fait s'écarter un faisceau de lumière parallèle qui la traverse.</p><p><strong>Lentille convergente</strong> : possède des bords minces et fait se rapprocher jusqu'à se réunir en un point un faisceau de lumière parallèle qui la traverse.</p>"
+            },
+            {
+                question: '<img src="lentilleVoc.png" alt="Schéma d\'une lentille">',
+                answer: "<p>Axe optique et Centre optique</p>"
+            },
+            {
+                question: "Citer les propriétés des 3 rayons permettant de construire l'image A'B' d'un objet AB au travers d'une lentille convergente.",
+                answer: "<ul><li>Un rayon passant par le centre optique n'est pas dévié.</li><li>Un rayon parallèle à l'axe optique ressort par le foyer image.</li><li>Un rayon passant par le foyer objet ressort parallèle à l'axe optique.</li></ul>"
+            },
+            {
+                question: '<img src="reelleVirtuelle.png" alt="Image réelle vs virtuelle">',
+                answer: "<p><strong>Image virtuelle.</strong> <i>L'image se situe avant la lentille.</i></p>"
+            },
+            {
+                question: "Donner l'expression littérale du grandissement.",
+                answer: '<span class="math">g = <span class="frac"><span class="num">A&#39;B&#39;</span><span class="fracbar">/</span><span class="den">AB</span></span> = <span class="frac"><span class="num">OA&#39;</span><span class="fracbar">/</span><span class="den">OA</span></span></span>'
+            },
+            {
+                question: " Dans le modèle de l'œil, comment appelle-t-on la lentille ?",
+                answer: "<p> La lentille correspond au cristallin (ou plus précisément à la cornée et le cristallin).<img src='vocOeil.png' alt='Schéma de l'œil'></p>"
+            }
+        ];
+
+        let currentIndex = 0;
+        const flashcardInner = document.getElementById('flashcardInner');
+        const questionElement = document.getElementById('question');
+        const answerElement = document.getElementById('answer');
+        const currentElement = document.getElementById('current');
+        const totalElement = document.getElementById('total');
+
+        totalElement.textContent = questions.length;
+
+        function updateFlashcard() {
+            questionElement.innerHTML = questions[currentIndex].question;
+            answerElement.innerHTML = questions[currentIndex].answer;
+            currentElement.textContent = currentIndex + 1;
+            flashcardInner.style.transform = 'rotateY(0deg)';
+        }
+
+        function flipCard() {
+            const isFlipped = flashcardInner.style.transform === 'rotateY(180deg)';
+            flashcardInner.style.transform = isFlipped ? 'rotateY(0deg)' : 'rotateY(180deg)';
+        }
+
+        document.getElementById('next').addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % questions.length;
+            updateFlashcard();
+        });
+
+        document.getElementById('prev').addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+            updateFlashcard();
+        });
+
+        document.getElementById('flip').addEventListener('click', flipCard);
+        flashcardInner.addEventListener('click', flipCard);
+
+        updateFlashcard();
+    </script>
+</body>
+</html>
